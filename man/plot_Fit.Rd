@@ -2,9 +2,10 @@
 % Please edit documentation in R/methods.R
 \name{plot_Fit}
 \alias{plot_Fit}
+\alias{plot_Fit.sf}
 \title{plot_Fit}
 \usage{
-plot_Fit(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
+plot_Fit.sf(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
 }
 \arguments{
 \item{object}{A sineFitData object}

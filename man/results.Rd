@@ -2,9 +2,10 @@
 % Please edit documentation in R/methods.R
 \name{results}
 \alias{results}
+\alias{results.sf}
 \title{results}
 \usage{
-results(object)
+results.sf(object)
 }
 \arguments{
 \item{object}{A sinFitData object}

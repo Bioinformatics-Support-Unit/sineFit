@@ -2,9 +2,10 @@
 % Please edit documentation in R/methods.R
 \name{plot_PeriodFits}
 \alias{plot_PeriodFits}
+\alias{plot_PeriodFits.sf}
 \title{plot_PeriodFits}
 \usage{
-plot_PeriodFits(
+plot_PeriodFits.sf(
   object,
   gene,
   periods,

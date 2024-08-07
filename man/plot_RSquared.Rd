@@ -2,9 +2,10 @@
 % Please edit documentation in R/methods.R
 \name{plot_RSquared}
 \alias{plot_RSquared}
+\alias{plot_RSquared.sf}
 \title{plot_RSquared}
 \usage{
-plot_RSquared(object, gene, plot_adj_rsquared = FALSE)
+plot_RSquared.sf(object, gene, plot_adj_rsquared = FALSE)
 }
 \arguments{
 \item{object}{A sineFitData object}
