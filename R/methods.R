@@ -50,7 +50,7 @@ results = function(object) slot(object, "Results")
 # setGeneric("results", function(object)
 #   standardGeneric("results"))
 # setMethod("results", signature(object = "sineFitData"), results.sineFit)
-setGeneric("results", def = results)
+#setGeneric("results", def = results)
 setMethod("results", signature(object = "sineFitData"), results)
 
 
@@ -70,7 +70,7 @@ plot_RSS = function(object, gene){
     ylab("RSS") +
     scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
 }
-setGeneric("plot_RSS", def = plot_RSS)
+#setGeneric("plot_RSS", def = plot_RSS)
 setMethod("plot_RSS", signature(object = "sineFitData"), plot_RSS)
 
 # Define plotting function for F-test (F-statistic or p-value)
@@ -98,7 +98,7 @@ plot_FStat = function(object, gene, plot_pvalues = FALSE){
     ylab(y_lab) +
     scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
 }
-setGeneric("plot_FStat", def = plot_FStat)
+#setGeneric("plot_FStat", def = plot_FStat)
 setMethod("plot_FStat", signature(object = "sineFitData"), plot_FStat)
 
 # Define plotting function for R-Squared (or adjusted R-Squared)
@@ -126,7 +126,7 @@ plot_RSquared = function(object, gene, plot_adj_rsquared = FALSE){
     ylab(y_lab) +
     scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
 }
-setGeneric("plot_RSquared", def = plot_RSquared)
+#setGeneric("plot_RSquared", def = plot_RSquared)
 setMethod("plot_RSquared", signature(object = "sineFitData"), plot_RSquared)
 
 
@@ -305,7 +305,7 @@ sineFit = function(in_data, rowData, min_per = 24, max_per = 24){
 
   return(sf)
 }
-setGeneric("sineFit", def = sineFit)
+#setGeneric("sineFit", def = sineFit)
 setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"), sineFit)
 
 
@@ -360,7 +360,7 @@ plot_Fit = function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = 
 
   return(g)
 }
-setGeneric("plot_Fit", def = plot_Fit)
+#setGeneric("plot_Fit", def = plot_Fit)
 setMethod("plot_Fit", signature(object = "sineFitData"), plot_Fit)
 
 
@@ -425,6 +425,6 @@ plot_PeriodFits = function(object, gene, periods, y_lower = NULL, y_upper = NULL
 
   return(g)
 }
-setGeneric("plot_PeriodFits", def = plot_PeriodFits)
+#setGeneric("plot_PeriodFits", def = plot_PeriodFits)
 setMethod("plot_PeriodFits", signature(object = "sineFitData"), plot_PeriodFits)
 
