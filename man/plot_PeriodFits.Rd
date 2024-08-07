@@ -2,10 +2,9 @@
 % Please edit documentation in R/methods.R
 \name{plot_PeriodFits}
 \alias{plot_PeriodFits}
-\alias{plot_PeriodFits.sineFit}
 \title{plot_PeriodFits}
 \usage{
-plot_PeriodFits.sineFit(
+plot_PeriodFits(
   object,
   gene,
   periods,

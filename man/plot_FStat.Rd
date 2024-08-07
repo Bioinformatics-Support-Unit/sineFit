@@ -2,10 +2,9 @@
 % Please edit documentation in R/methods.R
 \name{plot_FStat}
 \alias{plot_FStat}
-\alias{plot_FStat.sineFit}
 \title{plot_FStat}
 \usage{
-plot_FStat.sineFit(object, gene, plot_pvalues = FALSE)
+plot_FStat(object, gene, plot_pvalues = FALSE)
 }
 \arguments{
 \item{object}{A sineFitData object}
