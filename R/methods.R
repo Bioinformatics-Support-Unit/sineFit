@@ -46,10 +46,13 @@ setMethod("show", "sineFitData",
 #' @title results
 #' @export
 #' @param object A sinFitData object
-results = function(object) slot(object, "Results")
-setGeneric("results", function(object)
-  standardGeneric("results"))
-setMethod("results", signature(object = "sineFitData"), results)
+results.sineFit = function(object) slot(object, "Results")
+# setGeneric("results", function(object)
+#   standardGeneric("results"))
+# setMethod("results", signature(object = "sineFitData"), results.sineFit)
+setGeneric("results", def = results.sineFit)
+setMethod("results", signature(object = "sineFitData"), results.sineFit)
+
 
 # Define plotting function for RSS
 #' @name plot_RSS
@@ -57,7 +60,7 @@ setMethod("results", signature(object = "sineFitData"), results)
 #' @export
 #' @param object A sineFitData object
 #' @param gene Gene name
-plot_RSS = function(object, gene){
+plot_RSS.sineFit = function(object, gene){
   rss_tb = slot(object, "RSS_per_period")
   min_per = min(rss_tb$Period)
   max_per = max(rss_tb$Period)
@@ -67,9 +70,8 @@ plot_RSS = function(object, gene){
     ylab("RSS") +
     scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
 }
-setGeneric("plot_RSS", function(object, gene)
-  standardGeneric("plot_RSS"))
-setMethod("plot_RSS", signature(object = "sineFitData"), plot_RSS)
+setGeneric("plot_RSS", def = plot_RSS.sineFit)
+setMethod("plot_RSS", signature(object = "sineFitData"), plot_RSS.sineFit)
 
 # Define plotting function for F-test (F-statistic or p-value)
 #' @name plot_FStat
@@ -78,7 +80,7 @@ setMethod("plot_RSS", signature(object = "sineFitData"), plot_RSS)
 #' @param object A sineFitData object
 #' @param gene Gene name
 #' @param plot_pvalues Logical to indicate if p-values should be plotted
-plot_FStat = function(object, gene, plot_pvalues = FALSE){
+plot_FStat.sineFit = function(object, gene, plot_pvalues = FALSE){
   if(plot_pvalues){
     fstat_tb = slot(object, "FStat_PVal_per_period")
     plot_title = paste0("F-Statistic p-values vs period: ", gene)
@@ -96,9 +98,8 @@ plot_FStat = function(object, gene, plot_pvalues = FALSE){
     ylab(y_lab) +
     scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
 }
-setGeneric("plot_FStat", function(object, gene, plot_pvalues = FALSE)
-  standardGeneric("plot_FStat"))
-setMethod("plot_FStat", signature(object = "sineFitData"), plot_FStat)
+setGeneric("plot_FStat", def = plot_FStat.sineFit)
+setMethod("plot_FStat", signature(object = "sineFitData"), plot_FStat.sineFit)
 
 # Define plotting function for R-Squared (or adjusted R-Squared)
 #' @name plot_RSquared
@@ -107,7 +108,7 @@ setMethod("plot_FStat", signature(object = "sineFitData"), plot_FStat)
 #' @param object A sineFitData object
 #' @param gene Gene name
 #' @param plot_adj_rsquared Logical to indicate if adjusted R-Squared should be plotted
-plot_RSquared = function(object, gene, plot_adj_rsquared = FALSE){
+plot_RSquared.sineFit = function(object, gene, plot_adj_rsquared = FALSE){
   if(plot_adj_rsquared){
     rsq_tb = slot(object, "Adj_RSquared_per_period")
     plot_title = paste0("Adjusted R-Squared vs period: ", gene)
@@ -125,9 +126,8 @@ plot_RSquared = function(object, gene, plot_adj_rsquared = FALSE){
     ylab(y_lab) +
     scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
 }
-setGeneric("plot_RSquared", function(object, gene, plot_adj_rsquared = FALSE)
-  standardGeneric("plot_RSquared"))
-setMethod("plot_RSquared", signature(object = "sineFitData"), plot_RSquared)
+setGeneric("plot_RSquared", def = plot_RSquared.sineFit)
+setMethod("plot_RSquared", signature(object = "sineFitData"), plot_RSquared.sineFit)
 
 
 # Function to get a set of points on sine wave
@@ -177,7 +177,7 @@ get_RSS = function(qr_obj, y_mat){
 #' @param rowData Data frame with sample IDs, time points and any other covariates
 #' @param min_per Minimum period to generate fit
 #' @param max_per Maximum period to generate fit
-sineFit = function(in_data, rowData, min_per = 24, max_per = 24){
+sineFit.sineFit = function(in_data, rowData, min_per = 24, max_per = 24){
 
   # Sort in_data and rowData by sample ID
   in_data = in_data[order(in_data[[1]]), ]
@@ -305,9 +305,8 @@ sineFit = function(in_data, rowData, min_per = 24, max_per = 24){
 
   return(sf)
 }
-setGeneric("sineFit", function(in_data, rowData, min_per = 24, max_per = 24)
-  standardGeneric("sineFit"))
-setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"), sineFit)
+setGeneric("sineFit", def = sineFit.sineFit)
+setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"), sineFit.sineFit)
 
 
 # Function to plot genes with best sine fits
@@ -319,7 +318,7 @@ setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"), 
 #' @param y_lower Optional lower y-axis limit
 #' @param y_upper Optional upper y-axis limit
 #' @param plot_title Optional plot title
-plot_Fit = function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL){
+plot_Fit.sineFit = function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL){
   # object = wk00.L.sf.24; genes = c("BMAL1", "PER1", "PER3", "TNMD"); y_lower = 2; y_upper = 9
 
   # Get gene expression data
@@ -361,9 +360,8 @@ plot_Fit = function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = 
 
   return(g)
 }
-setGeneric("plot_Fit", function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
-  standardGeneric("plot_Fit"))
-setMethod("plot_Fit", signature(object = "sineFitData"), plot_Fit)
+setGeneric("plot_Fit", def = plot_Fit.sineFit)
+setMethod("plot_Fit", signature(object = "sineFitData"), plot_Fit.sineFit)
 
 
 # Function to plot gene fits for given periods
@@ -378,7 +376,7 @@ setMethod("plot_Fit", signature(object = "sineFitData"), plot_Fit)
 #' @param y_lower Optional lower y-axis limit
 #' @param y_upper Optional upper y-axis limit
 #' @param plot_title Optional plot title
-plot_PeriodFits = function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL){
+plot_PeriodFits.sineFit = function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL){
   # object = wk00.L.sf.24; gene = "BMAL1"; periods = c(18, 24, 30); y_lower = NULL; y_upper = NULL; plot_title = NULL
 
   # Designed to work for a single gene, so check argument
@@ -397,7 +395,7 @@ plot_PeriodFits = function(object, gene, periods, y_lower = NULL, y_upper = NULL
   # Get list of sineFit objects for requested periods
   sf_list = mapply(sineFit, periods, periods, MoreArgs = list(in_data = in_data, rowData = rowData))
   # Get sineFit results
-  fit_vars = lapply(sf_list, results) %>% bind_rows()  ### should this be results or results?
+  fit_vars = lapply(sf_list, results.sineFit) %>% bind_rows()  ### should this be results or results.sineFit?
   # Get points for sine waves
   x = seq(0, 24, length.out = 288)
   sine_points = mapply(get_sine_points,
@@ -427,7 +425,6 @@ plot_PeriodFits = function(object, gene, periods, y_lower = NULL, y_upper = NULL
 
   return(g)
 }
-setGeneric("plot_PeriodFits", function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL)
-  standardGeneric("plot_PeriodFits"))
-setMethod("plot_PeriodFits", signature(object = "sineFitData"), plot_PeriodFits)
+setGeneric("plot_PeriodFits", def = plot_PeriodFits.sineFit)
+setMethod("plot_PeriodFits", signature(object = "sineFitData"), plot_PeriodFits.sineFit)
 
