@@ -2,10 +2,9 @@
 % Please edit documentation in R/methods.R
 \name{plot_RSS}
 \alias{plot_RSS}
-\alias{plot_RSS.sineFit}
 \title{plot_RSS}
 \usage{
-plot_RSS.sineFit(object, gene)
+plot_RSS(object, gene)
 }
 \arguments{
 \item{object}{A sineFitData object}

@@ -2,10 +2,9 @@
 % Please edit documentation in R/methods.R
 \name{sineFit}
 \alias{sineFit}
-\alias{sineFit.sineFit}
 \title{sineFit}
 \usage{
-sineFit.sineFit(in_data, rowData, min_per = 24, max_per = 24)
+sineFit(in_data, rowData, min_per = 24, max_per = 24)
 }
 \arguments{
 \item{in_data}{Data frame with sample IDs and expression values}
