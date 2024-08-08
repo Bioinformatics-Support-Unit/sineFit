@@ -28,8 +28,8 @@ The returned data frame contains data for the best-fitting sine waves. The colum
 \item \code{lm_RSquared:}    the linear R-squared value
 \item \code{lm_Adj_RSquared:}    the adjusted linear R-squared value
 \item \code{lm_RSS:}    the residual sum of squares for the linear model
-\item \code{RSS_flag:}    TRUE if the RSS vs Period plot has no local minimum within the \code{min_per} and \code{max_per} values
-used when generating the \code{sineFitData} object. Not present if \code{sineFit} was run with a fixed period.
+\item \code{RSS_flag:}    TRUE if the RSS vs Period plot has no local minimum within the time interval \code{[min_per, max_per]} used
+when generating the \code{sineFitData} object. Not present if \code{sineFit} was run with a fixed period.
 \item \code{Base:}    the base (mean) level for the sine
 \item \code{Amp:}    the amplitude for the sine
 \item \code{Period:}    the period (angular frequency) for the sine

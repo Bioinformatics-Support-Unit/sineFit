@@ -39,7 +39,7 @@ plot_PeriodFits(
 
 \item{plot_title}{Optional custom plot title (defaults to object name and gene name)}
 
-\item{period_cols}{Optional vector of colours for period sine waves. Should be at least the same length as \code{periods} or
+\item{period_cols}{Optional vector of (corresponding) colours for period sine waves. Should be at least the same length as \code{periods} or
 the default \code{ggplot} palette will be used.}
 }
 \value{

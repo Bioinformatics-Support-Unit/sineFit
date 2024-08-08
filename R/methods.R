@@ -150,7 +150,7 @@ setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"),
                                Phase_Shift = lm_horiz, Peak_Phase = lm_phase)
             # Add RSS flag if variable period fit
             if(length(period_vec) > 1){
-              result_tb = mutate(RSS_flag = rss_flag, .after = lm_RSS)
+              result_tb = mutate(result_tb, RSS_flag = rss_flag, .after = lm_RSS)
             }
 
             # Rearrange RSS per period
@@ -240,8 +240,8 @@ setMethod("show", "sineFitData",
 #' \item \code{lm_RSquared:}    the linear R-squared value
 #' \item \code{lm_Adj_RSquared:}    the adjusted linear R-squared value
 #' \item \code{lm_RSS:}    the residual sum of squares for the linear model
-#' \item \code{RSS_flag:}    TRUE if the RSS vs Period plot has no local minimum within the \code{min_per} and \code{max_per} values
-#' used when generating the \code{sineFitData} object. Not present if \code{sineFit} was run with a fixed period.
+#' \item \code{RSS_flag:}    TRUE if the RSS vs Period plot has no local minimum within the time interval \code{[min_per, max_per]} used
+#' when generating the \code{sineFitData} object. Not present if \code{sineFit} was run with a fixed period.
 #' \item \code{Base:}    the base (mean) level for the sine
 #' \item \code{Amp:}    the amplitude for the sine
 #' \item \code{Period:}    the period (angular frequency) for the sine
@@ -283,7 +283,7 @@ setMethod("results", signature(object = "sineFitData"),
 #' @param y_lower Optional lower y-axis limit (defaults to minimum expression or sine wave point)
 #' @param y_upper Optional upper y-axis limit (defaults to maximum expression or sine wave point)
 #' @param plot_title Optional custom plot title (defaults to object name and comma-separated list of gene names)
-#' @param gene_cols Optional vector of colours for genes. Should be at least the same length as \code{genes} or
+#' @param gene_cols Optional vector of (corresponding) colours for genes. Should be at least the same length as \code{genes} or
 #' the default \code{ggplot} palette will be used.
 #' @returns A ggplot object
 setGeneric("plot_Fit", function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL, gene_cols = NULL)
@@ -363,7 +363,7 @@ setMethod("plot_Fit", signature(object = "sineFitData"),
 #' @param y_lower Optional lower y-axis limit (defaults to minimum expression or sine wave point)
 #' @param y_upper Optional upper y-axis limit (defaults to maximum expression or sine wave point)
 #' @param plot_title Optional custom plot title (defaults to object name and gene name)
-#' @param period_cols Optional vector of colours for period sine waves. Should be at least the same length as \code{periods} or
+#' @param period_cols Optional vector of (corresponding) colours for period sine waves. Should be at least the same length as \code{periods} or
 #' the default \code{ggplot} palette will be used.
 #' @returns A ggplot object
 setGeneric("plot_PeriodFits", function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL, period_cols = NULL)

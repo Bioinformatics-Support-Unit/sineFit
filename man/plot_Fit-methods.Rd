@@ -35,7 +35,7 @@ plot_Fit(
 
 \item{plot_title}{Optional custom plot title (defaults to object name and comma-separated list of gene names)}
 
-\item{gene_cols}{Optional vector of colours for genes. Should be at least the same length as \code{genes} or
+\item{gene_cols}{Optional vector of (corresponding) colours for genes. Should be at least the same length as \code{genes} or
 the default \code{ggplot} palette will be used.}
 }
 \value{
