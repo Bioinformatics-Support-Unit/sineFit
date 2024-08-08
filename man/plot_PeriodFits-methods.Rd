@@ -12,7 +12,8 @@ plot_PeriodFits(
   periods,
   y_lower = NULL,
   y_upper = NULL,
-  plot_title = NULL
+  plot_title = NULL,
+  period_cols = NULL
 )
 
 \S4method{plot_PeriodFits}{sineFitData}(
@@ -21,7 +22,8 @@ plot_PeriodFits(
   periods,
   y_lower = NULL,
   y_upper = NULL,
-  plot_title = NULL
+  plot_title = NULL,
+  period_cols = NULL
 )
 }
 \arguments{
@@ -36,6 +38,9 @@ plot_PeriodFits(
 \item{y_upper}{Optional upper y-axis limit (defaults to maximum expression or sine wave point)}
 
 \item{plot_title}{Optional custom plot title (defaults to object name and gene name)}
+
+\item{period_cols}{Optional vector of colours for period sine waves. Should be at least the same length as \code{periods} or
+the default \code{ggplot} palette will be used.}
 }
 \value{
 A ggplot object
@@ -46,6 +51,6 @@ Plot the expression and fitted sine waves for a gene and a given vector of perio
 \details{
 This function is intended to allow visual comparisons of the best fits for different period values. The function calls
 \code{sineFit} for the given periods, so it will work even if the given periods were not in the interval used when generating
-the input \code{sineFitData} object. Allows for a limited amount of customisation (title and y-axis limits). Use \code{layer_data()}
-from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
+the input \code{sineFitData} object. Allows for a limited amount of customisation (title, y-axis limits, colour of period sine waves).
+Use \code{layer_data()} from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
 }

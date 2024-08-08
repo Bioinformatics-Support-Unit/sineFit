@@ -261,7 +261,7 @@ setMethod("results", signature(object = "sineFitData"),
 
 #' @title Plot the best fits
 #' @description Plot the expression and best fitting sine waves for a vector of genes.
-#' @details This plotting function allows for a limited amount of customisation (title and y-axis limits). Use \code{layer_data()}
+#' @details This plotting function allows for a limited amount of customisation (title, y-axis limits, colour of genes). Use \code{layer_data()}
 #' from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
 #' @export
 #' @rdname plot_Fit-methods
@@ -271,14 +271,16 @@ setMethod("results", signature(object = "sineFitData"),
 #' @param y_lower Optional lower y-axis limit (defaults to minimum expression or sine wave point)
 #' @param y_upper Optional upper y-axis limit (defaults to maximum expression or sine wave point)
 #' @param plot_title Optional custom plot title (defaults to object name and comma-separated list of gene names)
+#' @param gene_cols Optional vector of colours for genes. Should be at least the same length as \code{genes} or
+#' the default \code{ggplot} palette will be used.
 #' @returns A ggplot object
-setGeneric("plot_Fit", function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
+setGeneric("plot_Fit", function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL, gene_cols = NULL)
   standardGeneric("plot_Fit"))
 
 #' @rdname plot_Fit-methods
 #' @aliases plot_Fit,sineFitData,ANY-method
 setMethod("plot_Fit", signature(object = "sineFitData"),
-          function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL){
+          function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL, gene_cols = NULL){
 
             # Get gene expression data
             gene_expr = slot(object, "Input_data") %>% select(1, all_of(genes))
@@ -316,6 +318,14 @@ setMethod("plot_Fit", signature(object = "sineFitData"),
               xlab("Time") +
               ggtitle(plot_title) +
               scale_x_continuous(breaks = seq(0, 24, by = 3), limits = c(0, 24))
+            # Use specified gene colours if provided
+            if(!is.null(gene_cols)){
+              if(length(gene_cols) >= length(genes)){
+                g = g + scale_colour_manual(values = gene_cols)
+              } else {
+                message("Insufficient colours supplied for gene_cols. Using ggplot default palette.")
+              }
+            }
 
             return(g)
           }
@@ -327,8 +337,8 @@ setMethod("plot_Fit", signature(object = "sineFitData"),
 #' @description Plot the expression and fitted sine waves for a gene and a given vector of period values.
 #' @details This function is intended to allow visual comparisons of the best fits for different period values. The function calls
 #' \code{sineFit} for the given periods, so it will work even if the given periods were not in the interval used when generating
-#' the input \code{sineFitData} object. Allows for a limited amount of customisation (title and y-axis limits). Use \code{layer_data()}
-#' from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
+#' the input \code{sineFitData} object. Allows for a limited amount of customisation (title, y-axis limits, colour of period sine waves).
+#' Use \code{layer_data()} from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
 #' @export
 #' @rdname plot_PeriodFits-methods
 #' @aliases plot_PeriodFits,sineFitData,ANY-method
@@ -338,14 +348,16 @@ setMethod("plot_Fit", signature(object = "sineFitData"),
 #' @param y_lower Optional lower y-axis limit (defaults to minimum expression or sine wave point)
 #' @param y_upper Optional upper y-axis limit (defaults to maximum expression or sine wave point)
 #' @param plot_title Optional custom plot title (defaults to object name and gene name)
+#' @param period_cols Optional vector of colours for period sine waves. Should be at least the same length as \code{periods} or
+#' the default \code{ggplot} palette will be used.
 #' @returns A ggplot object
-setGeneric("plot_PeriodFits", function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL)
+setGeneric("plot_PeriodFits", function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL, period_cols = NULL)
   standardGeneric("plot_PeriodFits"))
 
 #' @rdname plot_PeriodFits-methods
 #' @aliases plot_PeriodFits,sineFitData,ANY-method
 setMethod("plot_PeriodFits", signature(object = "sineFitData"),
-          function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL){
+          function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL, period_cols = NULL){
 
             # Designed to work for a single gene, so check argument
             stopifnot("The gene argument of plot_Periods() should be a single gene" = length(gene) == 1)
@@ -390,6 +402,14 @@ setMethod("plot_PeriodFits", signature(object = "sineFitData"),
               xlab("Time") +
               ggtitle(plot_title) +
               scale_x_continuous(breaks = seq(0, 24, by = 3), limits = c(0, 24))
+            # Use specified period colours if provided
+            if(!is.null(period_cols)){
+              if(length(period_cols) >= length(period)){
+                g = g + scale_colour_manual(values = period_cols)
+              } else {
+                message("Insufficient colours supplied for period_cols. Using ggplot default palette.")
+              }
+            }
 
             return(g)
           }

@@ -6,9 +6,23 @@
 \alias{plot_Fit,sineFitData-method}
 \title{Plot the best fits}
 \usage{
-plot_Fit(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
+plot_Fit(
+  object,
+  genes,
+  y_lower = NULL,
+  y_upper = NULL,
+  plot_title = NULL,
+  gene_cols = NULL
+)
 
-\S4method{plot_Fit}{sineFitData}(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
+\S4method{plot_Fit}{sineFitData}(
+  object,
+  genes,
+  y_lower = NULL,
+  y_upper = NULL,
+  plot_title = NULL,
+  gene_cols = NULL
+)
 }
 \arguments{
 \item{object}{A sineFitData object}
@@ -20,6 +34,9 @@ plot_Fit(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
 \item{y_upper}{Optional upper y-axis limit (defaults to maximum expression or sine wave point)}
 
 \item{plot_title}{Optional custom plot title (defaults to object name and comma-separated list of gene names)}
+
+\item{gene_cols}{Optional vector of colours for genes. Should be at least the same length as \code{genes} or
+the default \code{ggplot} palette will be used.}
 }
 \value{
 A ggplot object
@@ -28,6 +45,6 @@ A ggplot object
 Plot the expression and best fitting sine waves for a vector of genes.
 }
 \details{
-This plotting function allows for a limited amount of customisation (title and y-axis limits). Use \code{layer_data()}
+This plotting function allows for a limited amount of customisation (title, y-axis limits, colour of genes). Use \code{layer_data()}
 from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
 }
