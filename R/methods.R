@@ -321,6 +321,9 @@ setMethod("plot_Fit", signature(object = "sineFitData"),
             # Use specified gene colours if provided
             if(!is.null(gene_cols)){
               if(length(gene_cols) >= length(genes)){
+                # Ensure order of gene colours corresponds with order of genes
+                names(gene_cols) = genes
+                gene_cols = as.vector(gene_cols[sort(names(gene_cols))])
                 g = g + scale_colour_manual(values = gene_cols)
               } else {
                 message("Insufficient colours supplied for gene_cols. Using ggplot default palette.")
@@ -404,7 +407,10 @@ setMethod("plot_PeriodFits", signature(object = "sineFitData"),
               scale_x_continuous(breaks = seq(0, 24, by = 3), limits = c(0, 24))
             # Use specified period colours if provided
             if(!is.null(period_cols)){
-              if(length(period_cols) >= length(period)){
+              if(length(period_cols) >= length(periods)){
+                # Ensure order of period colours corresponds with order of periods
+                names(period_cols) = periods
+                period_cols = as.vector(period_cols[sort(names(period_cols))])
                 g = g + scale_colour_manual(values = period_cols)
               } else {
                 message("Insufficient colours supplied for period_cols. Using ggplot default palette.")
