@@ -4,7 +4,7 @@
 \name{sineFitData-class}
 \alias{sineFitData-class}
 \alias{sineFitData}
-\title{sineFitData}
+\title{sineFitData class}
 \description{
-sineFitData
+sineFitData class
 }
