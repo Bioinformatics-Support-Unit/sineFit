@@ -4,7 +4,7 @@
 \alias{plot_RSquared}
 \alias{plot_RSquared,sineFitData,ANY-method}
 \alias{plot_RSquared,sineFitData-method}
-\title{plot_RSquared}
+\title{Plot the linear model R-squared value for each period}
 \usage{
 plot_RSquared(object, gene, plot_adj_rsquared = FALSE)
 
@@ -21,5 +21,8 @@ plot_RSquared(object, gene, plot_adj_rsquared = FALSE)
 A ggplot object
 }
 \description{
-plot_RSquared
+This function plots the linear model R-squared value across the period interval used when generating the \code{sineFitData} object.
+}
+\details{
+By default this function plots the R-squared value; set \code{plot_adj_rsquared} to \code{TRUE} to plot the adjusted R-squared value instead.
 }

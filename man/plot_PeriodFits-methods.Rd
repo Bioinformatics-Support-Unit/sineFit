@@ -4,7 +4,7 @@
 \alias{plot_PeriodFits}
 \alias{plot_PeriodFits,sineFitData,ANY-method}
 \alias{plot_PeriodFits,sineFitData-method}
-\title{plot_PeriodFits}
+\title{Plot the best fits for given periods}
 \usage{
 plot_PeriodFits(
   object,
@@ -27,10 +27,9 @@ plot_PeriodFits(
 \arguments{
 \item{object}{A sineFitData object}
 
-\item{gene}{A gene to plot various period fits for}
+\item{gene}{A gene for which to plot various period fits}
 
-\item{periods}{A vector of periods to plot. The best fit for each given period is calculated and displayed.
-Note that given period(s) need not be in the interval used when generating the inout sineFit object.}
+\item{periods}{A vector of periods for which to plot the best fits}
 
 \item{y_lower}{Optional lower y-axis limit (defaults to minimum expression or sine wave point)}
 
@@ -42,5 +41,11 @@ Note that given period(s) need not be in the interval used when generating the i
 A ggplot object
 }
 \description{
-plot_PeriodFits
+Plot the expression and fitted sine waves for a gene and a given vector of period values.
+}
+\details{
+This function is intended to allow visual comparisons of the best fits for different period values. The function calls
+\code{sineFit} for the given periods, so it will work even if the given periods were not in the interval used when generating
+the object. Allows for a limited amount of customisation (title and y-axis limits). Use \code{layer_data()}
+from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
 }

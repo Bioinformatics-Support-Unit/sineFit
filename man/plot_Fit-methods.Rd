@@ -4,7 +4,7 @@
 \alias{plot_Fit}
 \alias{plot_Fit,sineFitData,ANY-method}
 \alias{plot_Fit,sineFitData-method}
-\title{plot_Fit}
+\title{Plot the best fits}
 \usage{
 plot_Fit(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
 
@@ -25,5 +25,9 @@ plot_Fit(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
 A ggplot object
 }
 \description{
-plot_Fit
+Plot the expression and best fitting sine waves for a vector of genes.
+}
+\details{
+This plotting function allows for a limited amount of customisation (title and y-axis limits). Use \code{layer_data()}
+from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
 }

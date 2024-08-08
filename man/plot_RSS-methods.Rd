@@ -4,7 +4,7 @@
 \alias{plot_RSS}
 \alias{plot_RSS,sineFitData,ANY-method}
 \alias{plot_RSS,sineFitData-method}
-\title{plot_RSS}
+\title{Plot the linear model RSS for each period}
 \usage{
 plot_RSS(object, gene)
 
@@ -19,5 +19,5 @@ plot_RSS(object, gene)
 A ggplot object
 }
 \description{
-plot_RSS
+Plot the linear model RSS across the period interval used when generating the \code{sineFitData} object.
 }

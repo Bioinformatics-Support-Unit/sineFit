@@ -4,7 +4,7 @@
 \alias{plot_FStat}
 \alias{plot_FStat,sineFitData,ANY-method}
 \alias{plot_FStat,sineFitData-method}
-\title{plot_FStat}
+\title{Plot the linear model F-statistic for each period}
 \usage{
 plot_FStat(object, gene, plot_pvalues = FALSE)
 
@@ -21,5 +21,8 @@ plot_FStat(object, gene, plot_pvalues = FALSE)
 A ggplot object
 }
 \description{
-plot_FStat
+This function plots the linear model F-statistic across the period interval used when generating the \code{sineFitData} object.
+}
+\details{
+By default this function plots the F-statistic; set \code{plot_pvalues} to \code{TRUE} to plot the F-statistic p-values instead.
 }

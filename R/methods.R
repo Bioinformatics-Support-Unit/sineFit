@@ -29,14 +29,14 @@ sineFitData = setClass("sineFitData", slots = c(Results = "data.frame",
 #' @title Fast sinusoidal regression for time-series data using a linearized model
 #' @description This function uses a linearized model to calculate the mean expression level, amplitude, period and phase-shift
 #' for the best-fitting sine waves for a given a set of timed gene expression levels.
-#' @details sineFit returns the best fits (the fit which minimizes RSS) for each gene within the given time interval \code{[min_per, max_per]}.
+#' @details sineFit returns the best fit (the fit which minimizes RSS) for each gene within the given time interval \code{[min_per, max_per]}.
 #' RSS is calculated at 5-minute intervals by default. To obtain a fixed period fit, set \code{min_per} and \code{max_per} to the same value.
 #' @docType methods
 #' @export
 #' @rdname sineFit-methods
 #' @aliases sineFit,data.frame,data.frame,ANY-method
-#' @param in_data Data frame with sample IDs in first column and gene expression values in subsequent columns
-#' @param rowData Data frame with (at minimum) sample IDs in 1st column and sample time points in 2nd column.
+#' @param in_data Data frame with sample IDs in the 1st column and gene expression values in subsequent columns
+#' @param rowData Data frame with (at minimum) sample IDs in the 1st column and sample time points in the 2nd column.
 #' Additional factors/covariates for the linear model can be added as subsequent columns.
 #' @param min_per Minimum period to generate fit
 #' @param max_per Maximum period to generate fit
@@ -224,17 +224,17 @@ setMethod("show", "sineFitData",
 #' @description Obtain a data frame containing sine wave parameters and linear model statistics for a sineFitData object.
 #' @details The returned data frame contains data for the best-fitting sine waves and has columns:
 #' \enumerate{
-#' \item \code{Gene} the gene name
-#' \item \code{lm_Ftest_Pval} the (unadjusted) p-value for the linear F-statistic
-#' \item \code{lm_Ftest_Adj_Pval} the p-value for the linear F-statistic adjusted for multiple test correction
-#' \item \code{lm_RSquared} the linear R-squared value
-#' \item \code{lm_Adj_RSquared} the adjusted linear R-squared value
-#' \item \code{lm_RSS} the residual sum of squares for the linear model
-#' \item \code{Base} the base (mean) level for the sine
-#' \item \code{Amp} the amplitude for the sine
-#' \item \code{Period} the period (angular frequency) for the sine
-#' \item \code{Phase_Shift} the phase-shift for the sine
-#' \item \code{Peak_Phase} the time at which the sine is at it's maximum
+#' \item \code{Gene:}   the gene name
+#' \item \code{lm_Ftest_Pval:}   the (unadjusted) p-value for the linear F-statistic
+#' \item \code{lm_Ftest_Adj_Pval:}   the p-value for the linear F-statistic adjusted for multiple test correction
+#' \item \code{lm_RSquared:}   the linear R-squared value
+#' \item \code{lm_Adj_RSquared:}   the adjusted linear R-squared value
+#' \item \code{lm_RSS:}   the residual sum of squares for the linear model
+#' \item \code{Base:}   the base (mean) level for the sine
+#' \item \code{Amp:}   the amplitude for the sine
+#' \item \code{Period:}   the period (angular frequency) for the sine
+#' \item \code{Phase_Shift:}   the phase-shift for the sine
+#' \item \code{Peak_Phase:}   the time at which the sine is at it's maximum
 #' }
 #' @export
 #' @rdname results-methods
@@ -258,7 +258,11 @@ setMethod("results", signature(object = "sineFitData"),
 # Plotting functions
 # ------------------
 
-#' @title plot_Fit
+
+#' @title Plot the best fits
+#' @description Plot the expression and best fitting sine waves for a vector of genes.
+#' @details This plotting function allows for a limited amount of customisation (title and y-axis limits). Use \code{layer_data()}
+#' from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
 #' @export
 #' @rdname plot_Fit-methods
 #' @aliases plot_Fit,sineFitData,ANY-method
@@ -318,18 +322,19 @@ setMethod("plot_Fit", signature(object = "sineFitData"),
 )
 
 
-# Function to plot gene fits for given periods
-# N.B. Works even if given period(s) are not in the interval used when generating the object
-# Intended to allow flexibility and time saving when investigating how fits look with the data
 
-#' @title plot_PeriodFits
+#' @title Plot the best fits for given periods
+#' @description Plot the expression and fitted sine waves for a gene and a given vector of period values.
+#' @details This function is intended to allow visual comparisons of the best fits for different period values. The function calls
+#' \code{sineFit} for the given periods, so it will work even if the given periods were not in the interval used when generating
+#' the object. Allows for a limited amount of customisation (title and y-axis limits). Use \code{layer_data()}
+#' from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
 #' @export
 #' @rdname plot_PeriodFits-methods
 #' @aliases plot_PeriodFits,sineFitData,ANY-method
 #' @param object A sineFitData object
-#' @param gene A gene to plot various period fits for
-#' @param periods A vector of periods to plot. The best fit for each given period is calculated and displayed.
-#' Note that given period(s) need not be in the interval used when generating the inout sineFit object.
+#' @param gene A gene for which to plot various period fits
+#' @param periods A vector of periods for which to plot the best fits
 #' @param y_lower Optional lower y-axis limit (defaults to minimum expression or sine wave point)
 #' @param y_upper Optional upper y-axis limit (defaults to maximum expression or sine wave point)
 #' @param plot_title Optional custom plot title (defaults to object name and gene name)
@@ -390,7 +395,9 @@ setMethod("plot_PeriodFits", signature(object = "sineFitData"),
           }
 )
 
-#' @title plot_RSS
+
+#' @title Plot the linear model RSS for each period
+#' @description Plot the linear model RSS across the period interval used when generating the \code{sineFitData} object.
 #' @export
 #' @rdname plot_RSS-methods
 #' @aliases plot_RSS,sineFitData,ANY-method
@@ -418,7 +425,9 @@ setMethod("plot_RSS", signature(object = "sineFitData"),
 )
 
 
-#' @title plot_FStat
+#' @title Plot the linear model F-statistic for each period
+#' @description This function plots the linear model F-statistic across the period interval used when generating the \code{sineFitData} object.
+#' @details By default this function plots the F-statistic; set \code{plot_pvalues} to \code{TRUE} to plot the F-statistic p-values instead.
 #' @export
 #' @rdname plot_FStat-methods
 #' @aliases plot_FStat,sineFitData,ANY-method
@@ -455,7 +464,9 @@ setMethod("plot_FStat", signature(object = "sineFitData"),
 )
 
 
-#' @title plot_RSquared
+#' @title Plot the linear model R-squared value for each period
+#' @description This function plots the linear model R-squared value across the period interval used when generating the \code{sineFitData} object.
+#' @details By default this function plots the R-squared value; set \code{plot_adj_rsquared} to \code{TRUE} to plot the adjusted R-squared value instead.
 #' @export
 #' @rdname plot_RSquared-methods
 #' @aliases plot_RSquared,sineFitData,ANY-method
