@@ -46,5 +46,5 @@ Plot the expression and best fitting sine waves for a vector of genes.
 }
 \details{
 This plotting function allows for a limited amount of customisation (title, y-axis limits, colour of genes). Use \code{layer_data()}
-from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
+from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomised plot.
 }

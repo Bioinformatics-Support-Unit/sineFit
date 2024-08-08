@@ -84,6 +84,12 @@ setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"),
             # Get RSS per gene per period)
             rss_per_period = sapply(qr_x_list, get_RSS, y_mat = as.matrix(in_data[, -1])) %>% as.matrix()
 
+            # Determine RSS flags: TRUE if RSS vs Period has no local minimum
+            # only applicable for variable period fits
+            if(length(period_vec) > 1){
+              rss_flag = sapply(1:nrow(rss_per_period), function(x) !any(diff(diff(rss_per_period[x, ]) > 0) == 1))
+            }
+
             # Get TSS for all genes
             lm_mean_devs = sweep(in_data[, -1], MARGIN = 2, STATS = colMeans(in_data[, -1]), FUN = "-")
             lm_tss = colSums(lm_mean_devs^2)
@@ -142,6 +148,10 @@ setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"),
                                lm_RSS = as.vector(lm_rss),
                                Base = lm_vert, Amp = lm_amp, Period = period_vec[min_rss_period],
                                Phase_Shift = lm_horiz, Peak_Phase = lm_phase)
+            # Add RSS flag if variable period fit
+            if(length(period_vec) > 1){
+              result_tb = mutate(RSS_flag = rss_flag, .after = lm_RSS)
+            }
 
             # Rearrange RSS per period
             rss_per_period = t(rss_per_period) %>% as.data.frame() %>% as_tibble() %>%
@@ -222,19 +232,21 @@ setMethod("show", "sineFitData",
 
 #' @title Access a table of results for a sineFitData object
 #' @description Obtain a data frame containing sine wave parameters and linear model statistics for a sineFitData object.
-#' @details The returned data frame contains data for the best-fitting sine waves and has columns:
+#' @details The returned data frame contains data for the best-fitting sine waves. The columns are as follows:
 #' \enumerate{
-#' \item \code{Gene:}   the gene name
-#' \item \code{lm_Ftest_Pval:}   the (unadjusted) p-value for the linear F-statistic
-#' \item \code{lm_Ftest_Adj_Pval:}   the p-value for the linear F-statistic adjusted for multiple test correction
-#' \item \code{lm_RSquared:}   the linear R-squared value
-#' \item \code{lm_Adj_RSquared:}   the adjusted linear R-squared value
-#' \item \code{lm_RSS:}   the residual sum of squares for the linear model
-#' \item \code{Base:}   the base (mean) level for the sine
-#' \item \code{Amp:}   the amplitude for the sine
-#' \item \code{Period:}   the period (angular frequency) for the sine
-#' \item \code{Phase_Shift:}   the phase-shift for the sine
-#' \item \code{Peak_Phase:}   the time at which the sine is at it's maximum
+#' \item \code{Gene:}    the gene name
+#' \item \code{lm_Ftest_Pval:}    the (unadjusted) p-value for the linear F-statistic
+#' \item \code{lm_Ftest_Adj_Pval:}    the p-value for the linear F-statistic adjusted for multiple test correction
+#' \item \code{lm_RSquared:}    the linear R-squared value
+#' \item \code{lm_Adj_RSquared:}    the adjusted linear R-squared value
+#' \item \code{lm_RSS:}    the residual sum of squares for the linear model
+#' \item \code{RSS_flag:}    TRUE if the RSS vs Period plot has no local minimum within the \code{min_per} and \code{max_per} values
+#' used when generating the \code{sineFitData} object. Not present if \code{sineFit} was run with a fixed period.
+#' \item \code{Base:}    the base (mean) level for the sine
+#' \item \code{Amp:}    the amplitude for the sine
+#' \item \code{Period:}    the period (angular frequency) for the sine
+#' \item \code{Phase_Shift:}    the phase-shift for the sine
+#' \item \code{Peak_Phase:}    the time at which the sine is at it's maximum
 #' }
 #' @export
 #' @rdname results-methods
@@ -262,7 +274,7 @@ setMethod("results", signature(object = "sineFitData"),
 #' @title Plot the best fits
 #' @description Plot the expression and best fitting sine waves for a vector of genes.
 #' @details This plotting function allows for a limited amount of customisation (title, y-axis limits, colour of genes). Use \code{layer_data()}
-#' from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
+#' from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomised plot.
 #' @export
 #' @rdname plot_Fit-methods
 #' @aliases plot_Fit,sineFitData,ANY-method
@@ -341,7 +353,7 @@ setMethod("plot_Fit", signature(object = "sineFitData"),
 #' @details This function is intended to allow visual comparisons of the best fits for different period values. The function calls
 #' \code{sineFit} for the given periods, so it will work even if the given periods were not in the interval used when generating
 #' the input \code{sineFitData} object. Allows for a limited amount of customisation (title, y-axis limits, colour of period sine waves).
-#' Use \code{layer_data()} from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomized plot.
+#' Use \code{layer_data()} from \code{ggplot} on the returned object to obtain the plot data if you wish to create your own cutomised plot.
 #' @export
 #' @rdname plot_PeriodFits-methods
 #' @aliases plot_PeriodFits,sineFitData,ANY-method

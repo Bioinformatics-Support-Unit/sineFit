@@ -20,18 +20,20 @@ A data frame with fit data and statistics for each gene
 Obtain a data frame containing sine wave parameters and linear model statistics for a sineFitData object.
 }
 \details{
-The returned data frame contains data for the best-fitting sine waves and has columns:
+The returned data frame contains data for the best-fitting sine waves. The columns are as follows:
 \enumerate{
-\item \code{Gene:}   the gene name
-\item \code{lm_Ftest_Pval:}   the (unadjusted) p-value for the linear F-statistic
-\item \code{lm_Ftest_Adj_Pval:}   the p-value for the linear F-statistic adjusted for multiple test correction
-\item \code{lm_RSquared:}   the linear R-squared value
-\item \code{lm_Adj_RSquared:}   the adjusted linear R-squared value
-\item \code{lm_RSS:}   the residual sum of squares for the linear model
-\item \code{Base:}   the base (mean) level for the sine
-\item \code{Amp:}   the amplitude for the sine
-\item \code{Period:}   the period (angular frequency) for the sine
-\item \code{Phase_Shift:}   the phase-shift for the sine
-\item \code{Peak_Phase:}   the time at which the sine is at it's maximum
+\item \code{Gene:}    the gene name
+\item \code{lm_Ftest_Pval:}    the (unadjusted) p-value for the linear F-statistic
+\item \code{lm_Ftest_Adj_Pval:}    the p-value for the linear F-statistic adjusted for multiple test correction
+\item \code{lm_RSquared:}    the linear R-squared value
+\item \code{lm_Adj_RSquared:}    the adjusted linear R-squared value
+\item \code{lm_RSS:}    the residual sum of squares for the linear model
+\item \code{RSS_flag:}    TRUE if the RSS vs Period plot has no local minimum within the \code{min_per} and \code{max_per} values
+used when generating the \code{sineFitData} object. Not present if \code{sineFit} was run with a fixed period.
+\item \code{Base:}    the base (mean) level for the sine
+\item \code{Amp:}    the amplitude for the sine
+\item \code{Period:}    the period (angular frequency) for the sine
+\item \code{Phase_Shift:}    the phase-shift for the sine
+\item \code{Peak_Phase:}    the time at which the sine is at it's maximum
 }
 }
