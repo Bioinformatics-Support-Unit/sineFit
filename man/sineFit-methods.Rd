@@ -29,6 +29,6 @@ This function uses a linearized model to calculate the mean expression level, am
 for the best-fitting sine waves for a given a set of timed gene expression levels.
 }
 \details{
-sineFit returns the best fit (the fit which minimizes RSS) for each gene within the given time interval \code{[min_per, max_per]}.
+\code{sineFit} returns the best fit (the fit which minimizes RSS) for each gene within the given time interval \code{[min_per, max_per]}.
 RSS is calculated at 5-minute intervals by default. To obtain a fixed period fit, set \code{min_per} and \code{max_per} to the same value.
 }

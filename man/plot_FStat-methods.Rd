@@ -21,7 +21,7 @@ plot_FStat(object, gene, plot_pvalues = FALSE)
 A ggplot object
 }
 \description{
-This function plots the linear model F-statistic across the period interval used when generating the \code{sineFitData} object.
+Plot the linear model F-statistic across the period interval used when generating the \code{sineFitData} object.
 }
 \details{
 By default this function plots the F-statistic; set \code{plot_pvalues} to \code{TRUE} to plot the F-statistic p-values instead.

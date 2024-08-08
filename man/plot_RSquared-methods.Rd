@@ -21,7 +21,7 @@ plot_RSquared(object, gene, plot_adj_rsquared = FALSE)
 A ggplot object
 }
 \description{
-This function plots the linear model R-squared value across the period interval used when generating the \code{sineFitData} object.
+Plot the linear model R-squared value across the period interval used when generating the \code{sineFitData} object.
 }
 \details{
 By default this function plots the R-squared value; set \code{plot_adj_rsquared} to \code{TRUE} to plot the adjusted R-squared value instead.

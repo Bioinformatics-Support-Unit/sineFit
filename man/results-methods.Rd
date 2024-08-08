@@ -11,10 +11,10 @@ results(object)
 \S4method{results}{sineFitData}(object)
 }
 \arguments{
-\item{object}{A sinFitData object}
+\item{object}{A sineFitData object}
 }
 \value{
-A tibble with fit data and statistics for each gene
+A data frame with fit data and statistics for each gene
 }
 \description{
 Obtain a data frame containing sine wave parameters and linear model statistics for a sineFitData object.
