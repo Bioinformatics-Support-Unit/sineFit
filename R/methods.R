@@ -26,7 +26,11 @@ sineFitData = setClass("sineFitData", slots = c(Results = "data.frame",
 # Create sineFitData object
 # -------------------------
 
-#' @title sineFit
+#' @title Fast sinusoidal regression for time-series data using a linearized model
+#' @description This function uses a linearized model to calculate the mean expression level, amplitude, period and phase-shift
+#' for the best-fitting sine waves for a given a set of timed gene expression levels.
+#' @details sineFit returns the best fits (the fit which minimizes RSS) for each gene within the given time interval \code{[min_per, max_per]}.
+#' RSS is calculated at 5-minute intervals by default. To obtain a fixed period fit, set \code{min_per} and \code{max_per} to the same value.
 #' @docType methods
 #' @export
 #' @rdname sineFit-methods
@@ -34,9 +38,9 @@ sineFitData = setClass("sineFitData", slots = c(Results = "data.frame",
 #' @param in_data Data frame with sample IDs in first column and gene expression values in subsequent columns
 #' @param rowData Data frame with (at minimum) sample IDs in 1st column and sample time points in 2nd column.
 #' Additional factors/covariates for the linear model can be added as subsequent columns.
-#' @param min_per, Minimum period to generate fit
+#' @param min_per Minimum period to generate fit
 #' @param max_per Maximum period to generate fit
-#' @returns sf A sineFitData object
+#' @returns A sineFitData object containing the best fits for each gene.
 setGeneric("sineFit", function(in_data, rowData, min_per = 24, max_per = 24)
   standardGeneric("sineFit"))
 
@@ -216,7 +220,22 @@ setMethod("show", "sineFitData",
 # Accessor for results slot of sineFitData object
 # -----------------------------------------------
 
-#' @title results
+#' @title Access a table of results for a sineFitData object
+#' @description Obtain a data frame containing sine wave parameters and linear model statistics for a sineFitData object.
+#' @details The returned data frame contains data for the best-fitting sine waves and has columns:
+#' \enumerate{
+#' \item \code{Gene} the gene name
+#' \item \code{lm_Ftest_Pval} the (unadjusted) p-value for the linear F-statistic
+#' \item \code{lm_Ftest_Adj_Pval} the p-value for the linear F-statistic adjusted for multiple test correction
+#' \item \code{lm_RSquared} the linear R-squared value
+#' \item \code{lm_Adj_RSquared} the adjusted linear R-squared value
+#' \item \code{lm_RSS} the residual sum of squares for the linear model
+#' \item \code{Base} the base (mean) level for the sine
+#' \item \code{Amp} the amplitude for the sine
+#' \item \code{Period} the period (angular frequency) for the sine
+#' \item \code{Phase_Shift} the phase-shift for the sine
+#' \item \code{Peak_Phase} the time at which the sine is at it's maximum
+#' }
 #' @export
 #' @rdname results-methods
 #' @aliases results,sineFitData,ANY-method

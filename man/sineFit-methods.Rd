@@ -5,7 +5,7 @@
 \alias{sineFit}
 \alias{sineFit,data.frame,data.frame,ANY-method}
 \alias{sineFit,data.frame,data.frame-method}
-\title{sineFit}
+\title{Fast sinusoidal regression for time-series data using a linearized model}
 \usage{
 sineFit(in_data, rowData, min_per = 24, max_per = 24)
 
@@ -17,13 +17,18 @@ sineFit(in_data, rowData, min_per = 24, max_per = 24)
 \item{rowData}{Data frame with (at minimum) sample IDs in 1st column and sample time points in 2nd column.
 Additional factors/covariates for the linear model can be added as subsequent columns.}
 
-\item{min_per, }{Minimum period to generate fit}
+\item{min_per}{Minimum period to generate fit}
 
 \item{max_per}{Maximum period to generate fit}
 }
 \value{
-sf A sineFitData object
+A sineFitData object containing the best fits for each gene.
 }
 \description{
-sineFit
+This function uses a linearized model to calculate the mean expression level, amplitude, period and phase-shift
+for the best-fitting sine waves for a given a set of timed gene expression levels.
+}
+\details{
+sineFit returns the best fits (the fit which minimizes RSS) for each gene within the given time interval \code{[min_per, max_per]}.
+RSS is calculated at 5-minute intervals by default. To obtain a fixed period fit, set \code{min_per} and \code{max_per} to the same value.
 }
