@@ -17,6 +17,9 @@ plot_FStat(object, gene, plot_pvalues = FALSE)
 
 \item{plot_pvalues}{Logical to indicate if p-values should be plotted}
 }
+\value{
+A ggplot object
+}
 \description{
 plot_FStat
 }

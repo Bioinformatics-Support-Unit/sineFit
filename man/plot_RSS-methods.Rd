@@ -15,6 +15,9 @@ plot_RSS(object, gene)
 
 \item{gene}{Gene name}
 }
+\value{
+A ggplot object
+}
 \description{
 plot_RSS
 }

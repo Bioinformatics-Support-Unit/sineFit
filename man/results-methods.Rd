@@ -14,7 +14,7 @@ results(object)
 \item{object}{A sinFitData object}
 }
 \value{
-tb A tibble with fit data and statistics for each gene
+A tibble with fit data and statistics for each gene
 }
 \description{
 results

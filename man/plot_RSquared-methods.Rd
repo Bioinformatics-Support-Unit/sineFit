@@ -17,6 +17,9 @@ plot_RSquared(object, gene, plot_adj_rsquared = FALSE)
 
 \item{plot_adj_rsquared}{Logical to indicate if adjusted R-Squared should be plotted}
 }
+\value{
+A ggplot object
+}
 \description{
 plot_RSquared
 }

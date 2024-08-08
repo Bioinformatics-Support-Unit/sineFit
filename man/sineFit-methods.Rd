@@ -12,11 +12,12 @@ sineFit(in_data, rowData, min_per = 24, max_per = 24)
 \S4method{sineFit}{data.frame,data.frame}(in_data, rowData, min_per = 24, max_per = 24)
 }
 \arguments{
-\item{in_data}{Data frame with sample IDs and expression values}
+\item{in_data}{Data frame with sample IDs in first column and gene expression values in subsequent columns}
 
-\item{rowData}{Data frame with sample IDs, time points and any other covariates}
+\item{rowData}{Data frame with (at minimum) sample IDs in 1st column and sample time points in 2nd column.
+Additional factors/covariates for the linear model can be added as subsequent columns.}
 
-\item{min_per}{Minimum period to generate fit}
+\item{min_per, }{Minimum period to generate fit}
 
 \item{max_per}{Maximum period to generate fit}
 }

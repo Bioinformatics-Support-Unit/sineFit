@@ -31,9 +31,10 @@ sineFitData = setClass("sineFitData", slots = c(Results = "data.frame",
 #' @export
 #' @rdname sineFit-methods
 #' @aliases sineFit,data.frame,data.frame,ANY-method
-#' @param in_data Data frame with sample IDs and expression values
-#' @param rowData Data frame with sample IDs, time points and any other covariates
-#' @param min_per Minimum period to generate fit
+#' @param in_data Data frame with sample IDs in first column and gene expression values in subsequent columns
+#' @param rowData Data frame with (at minimum) sample IDs in 1st column and sample time points in 2nd column.
+#' Additional factors/covariates for the linear model can be added as subsequent columns.
+#' @param min_per, Minimum period to generate fit
 #' @param max_per Maximum period to generate fit
 #' @returns sf A sineFitData object
 setGeneric("sineFit", function(in_data, rowData, min_per = 24, max_per = 24)
@@ -220,7 +221,7 @@ setMethod("show", "sineFitData",
 #' @rdname results-methods
 #' @aliases results,sineFitData,ANY-method
 #' @param object A sinFitData object
-#' @returns tb A tibble with fit data and statistics for each gene
+#' @returns A tibble with fit data and statistics for each gene
 setGeneric("results", function(object)
   standardGeneric("results"))
 
@@ -238,124 +239,137 @@ setMethod("results", signature(object = "sineFitData"),
 # Plotting functions
 # ------------------
 
-#' @name plot_Fit
 #' @title plot_Fit
 #' @export
+#' @rdname plot_Fit-methods
+#' @aliases plot_Fit,sineFitData,ANY-method
 #' @param object A sineFitData object
 #' @param genes A vector of genes to plot
-#' @param y_lower Optional lower y-axis limit
-#' @param y_upper Optional upper y-axis limit
-#' @param plot_title Optional plot title
-plot_Fit.sf = function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL){
-  # object = wk00.L.sf.24; genes = c("BMAL1", "PER1", "PER3", "TNMD"); y_lower = 2; y_upper = 9
+#' @param y_lower Optional lower y-axis limit (defaults to minimum expression or sine wave point)
+#' @param y_upper Optional upper y-axis limit (defaults to maximum expression or sine wave point)
+#' @param plot_title Optional custom plot title (defaults to object name and comma-separated list of gene names)
+#' @returns A ggplot object
+setGeneric("plot_Fit", function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL)
+  standardGeneric("plot_Fit"))
 
-  # Get gene expression data
-  gene_expr = slot(object, "Input_data") %>% select(1, all_of(genes))
-  time_data = slot(object, "Row_data") %>% pull(2)
-  # These are in the same order (checked when creating the sinFit object)
-  gene_expr$time_point = time_data
-  gene_data = pivot_longer(gene_expr, cols = all_of(genes), names_to = "gene", values_to = "expression") %>%
-    mutate_at("gene", as.factor)
+#' @rdname plot_Fit-methods
+#' @aliases plot_Fit,sineFitData,ANY-method
+setMethod("plot_Fit", signature(object = "sineFitData"),
+          function(object, genes, y_lower = NULL, y_upper = NULL, plot_title = NULL){
 
-  # Get sine wave variables
-  fit_vars = results(object) %>% filter(Gene %in% genes)
-  # Get points for sine waves
-  x = seq(0, 24, length.out = 288)
-  sine_points = mapply(get_sine_points,
-                       fit_vars$Base, fit_vars$Amp, fit_vars$Period, fit_vars$Phase_Shift,
-                       MoreArgs = list(x = x)) %>% as.data.frame()
-  colnames(sine_points) = fit_vars$Gene
-  sine_points$x = x
-  sine_data = pivot_longer(sine_points, cols = all_of(genes), names_to = "gene", values_to = "y") %>%
-    mutate_at("gene", as.factor)
+            # Get gene expression data
+            gene_expr = slot(object, "Input_data") %>% select(1, all_of(genes))
+            time_data = slot(object, "Row_data") %>% pull(2)
+            # These are in the same order (checked when creating the sinFit object)
+            gene_expr$time_point = time_data
+            gene_data = pivot_longer(gene_expr, cols = all_of(genes), names_to = "gene", values_to = "expression") %>%
+              mutate_at("gene", as.factor)
 
-  # Make plot:
-  # Set plot title if not provided
-  if(is.null(plot_title)){
-    plot_title = paste0(deparse(substitute(object)), " : ", paste(genes, collapse = ", "))
-  }
-  # Set y-axis limits if not provided
-  y_range = range(c(gene_data$expression, sine_data$y))
-  if(is.null(y_lower)) y_lower = y_range[1]
-  if(is.null(y_upper)) y_upper = y_range[2]
-  g = ggplot(gene_data, aes(x = time_point, y = expression, colour = gene)) +
-    geom_point() +
-    geom_line(data = sine_data, aes(x = x, y = y, colour = gene)) +
-    ylim(y_lower, y_upper) +
-    xlab("Time") +
-    ggtitle(plot_title) +
-    scale_x_continuous(breaks = seq(0, 24, by = 3), limits = c(0, 24))
+            # Get sine wave variables
+            fit_vars = results(object) %>% filter(Gene %in% genes)
+            # Get points for sine waves
+            x = seq(0, 24, length.out = 288)
+            sine_points = mapply(get_sine_points,
+                                 fit_vars$Base, fit_vars$Amp, fit_vars$Period, fit_vars$Phase_Shift,
+                                 MoreArgs = list(x = x)) %>% as.data.frame()
+            colnames(sine_points) = fit_vars$Gene
+            sine_points$x = x
+            sine_data = pivot_longer(sine_points, cols = all_of(genes), names_to = "gene", values_to = "y") %>%
+              mutate_at("gene", as.factor)
 
-  return(g)
-}
-setGeneric("plot_Fit", def = plot_Fit.sf)
-setMethod("plot_Fit", signature(object = "sineFitData"), plot_Fit.sf)
+            # Make plot:
+            # Set plot title if not provided
+            if(is.null(plot_title)){
+              plot_title = paste0(deparse(substitute(object)), " : ", paste(genes, collapse = ", "))
+            }
+            # Set y-axis limits if not provided
+            y_range = range(c(gene_data$expression, sine_data$y))
+            if(is.null(y_lower)) y_lower = y_range[1]
+            if(is.null(y_upper)) y_upper = y_range[2]
+            g = ggplot(gene_data, aes(x = time_point, y = expression, colour = gene)) +
+              geom_point() +
+              geom_line(data = sine_data, aes(x = x, y = y, colour = gene)) +
+              ylim(y_lower, y_upper) +
+              xlab("Time") +
+              ggtitle(plot_title) +
+              scale_x_continuous(breaks = seq(0, 24, by = 3), limits = c(0, 24))
+
+            return(g)
+          }
+)
 
 
 # Function to plot gene fits for given periods
 # N.B. Works even if given period(s) are not in the interval used when generating the object
 # Intended to allow flexibility and time saving when investigating how fits look with the data
-#' @name plot_PeriodFits
+
 #' @title plot_PeriodFits
 #' @export
+#' @rdname plot_PeriodFits-methods
+#' @aliases plot_PeriodFits,sineFitData,ANY-method
 #' @param object A sineFitData object
-#' @param gene Gene to plot periods for
-#' @param periods Periods to plot best fits for
-#' @param y_lower Optional lower y-axis limit
-#' @param y_upper Optional upper y-axis limit
-#' @param plot_title Optional plot title
-plot_PeriodFits.sf = function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL){
-  # object = wk00.L.sf.24; gene = "BMAL1"; periods = c(18, 24, 30); y_lower = NULL; y_upper = NULL; plot_title = NULL
+#' @param gene A gene to plot various period fits for
+#' @param periods A vector of periods to plot. The best fit for each given period is calculated and displayed.
+#' Note that given period(s) need not be in the interval used when generating the inout sineFit object.
+#' @param y_lower Optional lower y-axis limit (defaults to minimum expression or sine wave point)
+#' @param y_upper Optional upper y-axis limit (defaults to maximum expression or sine wave point)
+#' @param plot_title Optional custom plot title (defaults to object name and gene name)
+#' @returns A ggplot object
+setGeneric("plot_PeriodFits", function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL)
+  standardGeneric("plot_PeriodFits"))
 
-  # Designed to work for a single gene, so check argument
-  stopifnot("The gene argument of plot_Periods() should be a single gene" = length(gene) == 1)
+#' @rdname plot_PeriodFits-methods
+#' @aliases plot_PeriodFits,sineFitData,ANY-method
+setMethod("plot_PeriodFits", signature(object = "sineFitData"),
+          function(object, gene, periods, y_lower = NULL, y_upper = NULL, plot_title = NULL){
 
-  # Get gene data
-  in_data = slot(object, "Input_data") %>% select(1, all_of(gene))
-  rowData = slot(object, "Row_data")
+            # Designed to work for a single gene, so check argument
+            stopifnot("The gene argument of plot_Periods() should be a single gene" = length(gene) == 1)
 
-  # Get gene values for plot
-  time_data = rowData %>% pull(2)
-  # These are in the same order (checked when creating the sinFit object)
-  gene_data = mutate(in_data, time_point = time_data)
-  colnames(gene_data)[2] = "expression"
+            # Get gene data
+            in_data = slot(object, "Input_data") %>% select(1, all_of(gene))
+            rowData = slot(object, "Row_data")
 
-  # Get list of sineFit objects for requested periods
-  sf_list = mapply(sineFit, periods, periods, MoreArgs = list(in_data = in_data, rowData = rowData))
-  # Get sineFit results
-  fit_vars = lapply(sf_list, results.sineFit) %>% bind_rows()  ### should this be results or results.sineFit?
-  # Get points for sine waves
-  x = seq(0, 24, length.out = 288)
-  sine_points = mapply(get_sine_points,
-                       fit_vars$Base, fit_vars$Amp, fit_vars$Period, fit_vars$Phase_Shift,
-                       MoreArgs = list(x = x)) %>% as.data.frame()
-  colnames(sine_points) = paste0("period_", round(periods, 2))
-  sine_points$x = x
-  sine_data = pivot_longer(sine_points, cols = starts_with("period_"), names_to = "Period", values_to = "y") %>%
-    mutate(Period = gsub("period_", "", Period)) %>% mutate_at("Period", as.factor)
+            # Get gene values for plot
+            time_data = rowData %>% pull(2)
+            # These are in the same order (checked when creating the sinFit object)
+            gene_data = mutate(in_data, time_point = time_data)
+            colnames(gene_data)[2] = "expression"
 
-  # Make plot:
-  # Set plot title if not provided
-  if(is.null(plot_title)){
-    plot_title = paste0(deparse(substitute(object)), " : ", gene)
-  }
-  # Set y-axis limits if not provided
-  y_range = range(c(gene_data$expression, sine_data$y))
-  if(is.null(y_lower)) y_lower = y_range[1]
-  if(is.null(y_upper)) y_upper = y_range[2]
-  g = ggplot(gene_data, aes(x = time_point, y = expression)) +
-    geom_point() +
-    geom_line(data = sine_data, aes(x = x, y = y, colour = Period)) +
-    ylim(y_lower, y_upper) +
-    xlab("Time") +
-    ggtitle(plot_title) +
-    scale_x_continuous(breaks = seq(0, 24, by = 3), limits = c(0, 24))
+            # Get list of sineFit objects for requested periods
+            sf_list = mapply(sineFit, periods, periods, MoreArgs = list(in_data = in_data, rowData = rowData))
+            # Get sineFit results
+            fit_vars = lapply(sf_list, results) %>% bind_rows()
+            # Get points for sine waves
+            x = seq(0, 24, length.out = 288)
+            sine_points = mapply(get_sine_points,
+                                 fit_vars$Base, fit_vars$Amp, fit_vars$Period, fit_vars$Phase_Shift,
+                                 MoreArgs = list(x = x)) %>% as.data.frame()
+            colnames(sine_points) = paste0("period_", round(periods, 2))
+            sine_points$x = x
+            sine_data = pivot_longer(sine_points, cols = starts_with("period_"), names_to = "Period", values_to = "y") %>%
+              mutate(Period = gsub("period_", "", Period)) %>% mutate_at("Period", as.factor)
 
-  return(g)
-}
-setGeneric("plot_PeriodFits", def = plot_PeriodFits.sf)
-setMethod("plot_PeriodFits", signature(object = "sineFitData"), plot_PeriodFits.sf)
+            # Make plot:
+            # Set plot title if not provided
+            if(is.null(plot_title)){
+              plot_title = paste0(deparse(substitute(object)), " : ", gene)
+            }
+            # Set y-axis limits if not provided
+            y_range = range(c(gene_data$expression, sine_data$y))
+            if(is.null(y_lower)) y_lower = y_range[1]
+            if(is.null(y_upper)) y_upper = y_range[2]
+            g = ggplot(gene_data, aes(x = time_point, y = expression)) +
+              geom_point() +
+              geom_line(data = sine_data, aes(x = x, y = y, colour = Period)) +
+              ylim(y_lower, y_upper) +
+              xlab("Time") +
+              ggtitle(plot_title) +
+              scale_x_continuous(breaks = seq(0, 24, by = 3), limits = c(0, 24))
 
+            return(g)
+          }
+)
 
 #' @title plot_RSS
 #' @export
@@ -363,6 +377,7 @@ setMethod("plot_PeriodFits", signature(object = "sineFitData"), plot_PeriodFits.
 #' @aliases plot_RSS,sineFitData,ANY-method
 #' @param object A sineFitData object
 #' @param gene Gene name
+#' @returns A ggplot object
 setGeneric("plot_RSS", function(object, gene)
   standardGeneric("plot_RSS"))
 
@@ -373,11 +388,13 @@ setMethod("plot_RSS", signature(object = "sineFitData"),
             rss_tb = slot(object, "RSS_per_period")
             min_per = min(rss_tb$Period)
             max_per = max(rss_tb$Period)
-            ggplot(rss_tb, aes(x = Period, y = .data[[gene]])) +
+            g = ggplot(rss_tb, aes(x = Period, y = .data[[gene]])) +
               geom_line() +
               ggtitle(paste0("RSS vs period: ", gene)) +
               ylab("RSS") +
               scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
+
+            return(g)
           }
 )
 
@@ -389,6 +406,7 @@ setMethod("plot_RSS", signature(object = "sineFitData"),
 #' @param object A sineFitData object
 #' @param gene Gene name
 #' @param plot_pvalues Logical to indicate if p-values should be plotted
+#' @returns A ggplot object
 setGeneric("plot_FStat", function(object, gene, plot_pvalues = FALSE)
   standardGeneric("plot_FStat"))
 
@@ -407,11 +425,13 @@ setMethod("plot_FStat", signature(object = "sineFitData"),
             }
             min_per = min(fstat_tb$Period)
             max_per = max(fstat_tb$Period)
-            ggplot(fstat_tb, aes(x = Period, y = .data[[gene]])) +
+            g = ggplot(fstat_tb, aes(x = Period, y = .data[[gene]])) +
               geom_line() +
               ggtitle(plot_title) +
               ylab(y_lab) +
               scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
+
+            return(g)
           }
 )
 
@@ -423,6 +443,7 @@ setMethod("plot_FStat", signature(object = "sineFitData"),
 #' @param object A sineFitData object
 #' @param gene Gene name
 #' @param plot_adj_rsquared Logical to indicate if adjusted R-Squared should be plotted
+#' @returns A ggplot object
 setGeneric("plot_RSquared", function(object, gene, plot_adj_rsquared = FALSE)
   standardGeneric("plot_RSquared"))
 
@@ -441,11 +462,13 @@ setMethod("plot_RSquared", signature(object = "sineFitData"),
             }
             min_per = min(rsq_tb$Period)
             max_per = max(rsq_tb$Period)
-            ggplot(rsq_tb, aes(x = Period, y = .data[[gene]])) +
+            g = ggplot(rsq_tb, aes(x = Period, y = .data[[gene]])) +
               geom_line() +
               ggtitle(plot_title) +
               ylab(y_lab) +
               scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
+
+            return(g)
           }
 )
 
@@ -486,13 +509,4 @@ get_peak_phase = function(vert, amp, per, horiz){
 get_RSS = function(qr_obj, y_mat){
   colSums((qr.resid(qr_obj, y_mat))^2)
 }
-
-
-
-
-
-
-
-
-
 
