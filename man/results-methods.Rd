@@ -2,13 +2,19 @@
 % Please edit documentation in R/methods.R
 \name{results}
 \alias{results}
-\alias{results.sf}
+\alias{results,sineFitData,ANY-method}
+\alias{results,sineFitData-method}
 \title{results}
 \usage{
-results.sf(object)
+results(object)
+
+\S4method{results}{sineFitData}(object)
 }
 \arguments{
 \item{object}{A sinFitData object}
+}
+\value{
+tb A tibble with fit data and statistics for each gene
 }
 \description{
 results

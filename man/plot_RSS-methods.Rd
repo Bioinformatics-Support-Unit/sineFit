@@ -2,10 +2,13 @@
 % Please edit documentation in R/methods.R
 \name{plot_RSS}
 \alias{plot_RSS}
-\alias{plot_RSS.sf}
+\alias{plot_RSS,sineFitData,ANY-method}
+\alias{plot_RSS,sineFitData-method}
 \title{plot_RSS}
 \usage{
-plot_RSS.sf(object, gene)
+plot_RSS(object, gene)
+
+\S4method{plot_RSS}{sineFitData}(object, gene)
 }
 \arguments{
 \item{object}{A sineFitData object}

@@ -2,10 +2,13 @@
 % Please edit documentation in R/methods.R
 \name{plot_FStat}
 \alias{plot_FStat}
-\alias{plot_FStat.sf}
+\alias{plot_FStat,sineFitData,ANY-method}
+\alias{plot_FStat,sineFitData-method}
 \title{plot_FStat}
 \usage{
-plot_FStat.sf(object, gene, plot_pvalues = FALSE)
+plot_FStat(object, gene, plot_pvalues = FALSE)
+
+\S4method{plot_FStat}{sineFitData}(object, gene, plot_pvalues = FALSE)
 }
 \arguments{
 \item{object}{A sineFitData object}

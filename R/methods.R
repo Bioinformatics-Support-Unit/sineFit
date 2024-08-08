@@ -1,6 +1,11 @@
 #' @import dplyr
 #' @import ggplot2
 
+
+# ------------------------
+# Define sineFitData class
+# ------------------------
+
 #' @title sineFitData class
 #' @rdname sineFitData
 #' @docType class
@@ -16,130 +21,10 @@ sineFitData = setClass("sineFitData", slots = c(Results = "data.frame",
                                                 Input_data = "data.frame",
                                                 Row_data = "data.frame"))
 
-#' @title Show summary of object
-#' @param object a sineFitData object
-#' @docType methods
-#' @rdname show-methods-sineFitData
-#' @export
-#' @aliases show,sineFitData,ANY-method
-#' @aliases show,sineFitData-method
-#' @name show_documentsetMethod
-setMethod("show", "sineFitData",
-          function(object){
-            num_samples = nrow(slot(object, "Input_data"))
-            num_genes = ncol(slot(object, "Input_data")) - 1
-            rowData_names = colnames(slot(object, "Row_data"))
-            if(length(rowData_names) > 2){
-              term_string = paste0("\nAdditional linear model coefficients: ",
-                                   rowData_names[3:length(rowData_names)], collapse = ", ")
-            } else {
-              term_string = ""
-            }
-            rss_tb = slot(object, "RSS_per_period")
-            min_per = min(rss_tb$Period)
-            max_per = max(rss_tb$Period)
-            if(min_per == max_per){
-              period_string = paste0("Generated with fixed period: ", min_per)
-            } else {
-              period_string = paste0("Generated with variable period: Min. period = ", min_per, ", Max. period = ", max_per)
-            }
-            # Message:
-            cat(paste0("A sineFitData object:\n", num_samples, " samples, ", num_genes, " genes\n",
-                       period_string, term_string))
-          }
-)
 
-
-# Accessor method for results
-#' @name results
-#' @title results
-#' @export
-#' @param object A sinFitData object
-results.sf = function(object) slot(object, "Results")
-# setGeneric("results", function(object)
-#   standardGeneric("results"))
-# setMethod("results", signature(object = "sineFitData"), results.sineFit)
-setGeneric("results", def = results.sf)
-setMethod("results", signature(object = "sineFitData"), results.sf)
-
-
-# Define plotting function for RSS
-#' @name plot_RSS
-#' @title plot_RSS
-#' @export
-#' @param object A sineFitData object
-#' @param gene Gene name
-plot_RSS.sf = function(object, gene){
-  rss_tb = slot(object, "RSS_per_period")
-  min_per = min(rss_tb$Period)
-  max_per = max(rss_tb$Period)
-  ggplot(rss_tb, aes(x = Period, y = .data[[gene]])) +
-    geom_line() +
-    ggtitle(paste0("RSS vs period: ", gene)) +
-    ylab("RSS") +
-    scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
-}
-setGeneric("plot_RSS", def = plot_RSS.sf)
-setMethod("plot_RSS", signature(object = "sineFitData"), plot_RSS.sf)
-
-# Define plotting function for F-test (F-statistic or p-value)
-#' @name plot_FStat
-#' @title plot_FStat
-#' @export
-#' @param object A sineFitData object
-#' @param gene Gene name
-#' @param plot_pvalues Logical to indicate if p-values should be plotted
-plot_FStat.sf = function(object, gene, plot_pvalues = FALSE){
-  if(plot_pvalues){
-    fstat_tb = slot(object, "FStat_PVal_per_period")
-    plot_title = paste0("F-Statistic p-values vs period: ", gene)
-    y_lab = "p-value"
-  } else {
-    fstat_tb = slot(object, "FStat_per_period")
-    plot_title = paste0("F-Statistic vs period: ", gene)
-    y_lab = "F-Statistic"
-  }
-  min_per = min(fstat_tb$Period)
-  max_per = max(fstat_tb$Period)
-  ggplot(fstat_tb, aes(x = Period, y = .data[[gene]])) +
-    geom_line() +
-    ggtitle(plot_title) +
-    ylab(y_lab) +
-    scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
-}
-setGeneric("plot_FStat", def = plot_FStat.sf)
-setMethod("plot_FStat", signature(object = "sineFitData"), plot_FStat.sf)
-
-# Define plotting function for R-Squared (or adjusted R-Squared)
-#' @name plot_RSquared
-#' @title plot_RSquared
-#' @export
-#' @param object A sineFitData object
-#' @param gene Gene name
-#' @param plot_adj_rsquared Logical to indicate if adjusted R-Squared should be plotted
-plot_RSquared.sf = function(object, gene, plot_adj_rsquared = FALSE){
-  if(plot_adj_rsquared){
-    rsq_tb = slot(object, "Adj_RSquared_per_period")
-    plot_title = paste0("Adjusted R-Squared vs period: ", gene)
-    y_lab = "Adjusted R-Squared"
-  } else {
-    rsq_tb = slot(object, "RSquared_per_period")
-    plot_title = paste0("R-Squared vs period: ", gene)
-    y_lab = "R-Squared"
-  }
-  min_per = min(rsq_tb$Period)
-  max_per = max(rsq_tb$Period)
-  ggplot(rsq_tb, aes(x = Period, y = .data[[gene]])) +
-    geom_line() +
-    ggtitle(plot_title) +
-    ylab(y_lab) +
-    scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
-}
-setGeneric("plot_RSquared", def = plot_RSquared.sf)
-setMethod("plot_RSquared", signature(object = "sineFitData"), plot_RSquared.sf)
-
-
-# Function to get sine-fits for genes using QR decomposition (fixed 24 hour period by default)
+# -------------------------
+# Create sineFitData object
+# -------------------------
 
 #' @title sineFit
 #' @docType methods
@@ -288,7 +173,71 @@ setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"),
 )
 
 
-# Function to plot genes with best sine fits
+# -----------------------
+# Show sineFitData object
+# -----------------------
+
+#' @title Show summary of object
+#' @param object a sineFitData object
+#' @docType methods
+#' @rdname show-methods-sineFitData
+#' @export
+#' @aliases show,sineFitData,ANY-method
+#' @aliases show,sineFitData-method
+#' @name show_documentsetMethod
+setMethod("show", "sineFitData",
+          function(object){
+            num_samples = nrow(slot(object, "Input_data"))
+            num_genes = ncol(slot(object, "Input_data")) - 1
+            rowData_names = colnames(slot(object, "Row_data"))
+            if(length(rowData_names) > 2){
+              term_string = paste0("\nAdditional linear model coefficients: ",
+                                   rowData_names[3:length(rowData_names)], collapse = ", ")
+            } else {
+              term_string = ""
+            }
+            rss_tb = slot(object, "RSS_per_period")
+            min_per = min(rss_tb$Period)
+            max_per = max(rss_tb$Period)
+            if(min_per == max_per){
+              period_string = paste0("Generated with fixed period: ", min_per)
+            } else {
+              period_string = paste0("Generated with variable period: Min. period = ", min_per, ", Max. period = ", max_per)
+            }
+            # Message:
+            cat(paste0("A sineFitData object:\n", num_samples, " samples, ", num_genes, " genes\n",
+                       period_string, term_string))
+          }
+)
+
+
+# -----------------------------------------------
+# Accessor for results slot of sineFitData object
+# -----------------------------------------------
+
+#' @title results
+#' @export
+#' @rdname results-methods
+#' @aliases results,sineFitData,ANY-method
+#' @param object A sinFitData object
+#' @returns tb A tibble with fit data and statistics for each gene
+setGeneric("results", function(object)
+  standardGeneric("results"))
+
+#' @rdname results-methods
+#' @aliases results,sineFitData,ANY-method
+setMethod("results", signature(object = "sineFitData"),
+          function(object){
+            tb = slot(object, "Results")
+            return(tb)
+          }
+)
+
+
+# ------------------
+# Plotting functions
+# ------------------
+
 #' @name plot_Fit
 #' @title plot_Fit
 #' @export
@@ -408,12 +357,105 @@ setGeneric("plot_PeriodFits", def = plot_PeriodFits.sf)
 setMethod("plot_PeriodFits", signature(object = "sineFitData"), plot_PeriodFits.sf)
 
 
+#' @title plot_RSS
+#' @export
+#' @rdname plot_RSS-methods
+#' @aliases plot_RSS,sineFitData,ANY-method
+#' @param object A sineFitData object
+#' @param gene Gene name
+setGeneric("plot_RSS", function(object, gene)
+  standardGeneric("plot_RSS"))
+
+#' @rdname plot_RSS-methods
+#' @aliases plot_RSS,sineFitData,ANY-method
+setMethod("plot_RSS", signature(object = "sineFitData"),
+          function(object, gene){
+            rss_tb = slot(object, "RSS_per_period")
+            min_per = min(rss_tb$Period)
+            max_per = max(rss_tb$Period)
+            ggplot(rss_tb, aes(x = Period, y = .data[[gene]])) +
+              geom_line() +
+              ggtitle(paste0("RSS vs period: ", gene)) +
+              ylab("RSS") +
+              scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
+          }
+)
+
+
+#' @title plot_FStat
+#' @export
+#' @rdname plot_FStat-methods
+#' @aliases plot_FStat,sineFitData,ANY-method
+#' @param object A sineFitData object
+#' @param gene Gene name
+#' @param plot_pvalues Logical to indicate if p-values should be plotted
+setGeneric("plot_FStat", function(object, gene, plot_pvalues = FALSE)
+  standardGeneric("plot_FStat"))
+
+#' @rdname plot_FStat-methods
+#' @aliases plot_FStat,sineFitData,ANY-method
+setMethod("plot_FStat", signature(object = "sineFitData"),
+          function(object, gene, plot_pvalues = FALSE){
+            if(plot_pvalues){
+              fstat_tb = slot(object, "FStat_PVal_per_period")
+              plot_title = paste0("F-Statistic p-values vs period: ", gene)
+              y_lab = "p-value"
+            } else {
+              fstat_tb = slot(object, "FStat_per_period")
+              plot_title = paste0("F-Statistic vs period: ", gene)
+              y_lab = "F-Statistic"
+            }
+            min_per = min(fstat_tb$Period)
+            max_per = max(fstat_tb$Period)
+            ggplot(fstat_tb, aes(x = Period, y = .data[[gene]])) +
+              geom_line() +
+              ggtitle(plot_title) +
+              ylab(y_lab) +
+              scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
+          }
+)
+
+
+#' @title plot_RSquared
+#' @export
+#' @rdname plot_RSquared-methods
+#' @aliases plot_RSquared,sineFitData,ANY-method
+#' @param object A sineFitData object
+#' @param gene Gene name
+#' @param plot_adj_rsquared Logical to indicate if adjusted R-Squared should be plotted
+setGeneric("plot_RSquared", function(object, gene, plot_adj_rsquared = FALSE)
+  standardGeneric("plot_RSquared"))
+
+#' @rdname plot_RSquared-methods
+#' @aliases plot_RSquared,sineFitData,ANY-method
+setMethod("plot_RSquared", signature(object = "sineFitData"),
+          function(object, gene, plot_adj_rsquared = FALSE){
+            if(plot_adj_rsquared){
+              rsq_tb = slot(object, "Adj_RSquared_per_period")
+              plot_title = paste0("Adjusted R-Squared vs period: ", gene)
+              y_lab = "Adjusted R-Squared"
+            } else {
+              rsq_tb = slot(object, "RSquared_per_period")
+              plot_title = paste0("R-Squared vs period: ", gene)
+              y_lab = "R-Squared"
+            }
+            min_per = min(rsq_tb$Period)
+            max_per = max(rsq_tb$Period)
+            ggplot(rsq_tb, aes(x = Period, y = .data[[gene]])) +
+              geom_line() +
+              ggtitle(plot_title) +
+              ylab(y_lab) +
+              scale_x_continuous(breaks = seq(min_per, max_per, by = 1))
+          }
+)
+
+
 # ----------------------
 # Non-exported functions
 # ----------------------
 
 
-# Function to get a set of points on sine wave
+#' @title get_sine_points
 #' @param x Co-ordinates on x-axis
 #' @param vert Vertical offset
 #' @param amp Amplitude
@@ -425,7 +467,7 @@ get_sine_points = function(x, vert, amp, per, horiz){
 }
 
 
-# Function to get peak phase (i.e. time at which sine wave is at max) for given amplitude, period and offsets
+#' @title get_peak_phase
 #' @param vert Vertical offset
 #' @param amp Amplitude
 #' @param per Period
@@ -438,7 +480,7 @@ get_peak_phase = function(vert, amp, per, horiz){
 }
 
 
-# Function to get RSS from QR decomposition
+#' @title get_RSS
 #' @param qr_obj QR decomposition object
 #' @param y_mat Matrix to use as second argument to qr()
 get_RSS = function(qr_obj, y_mat){
