@@ -84,12 +84,6 @@ setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"),
             # Get RSS per gene per period)
             rss_per_period = sapply(qr_x_list, get_RSS, y_mat = as.matrix(in_data[, -1])) %>% as.matrix()
 
-            # Determine RSS flags: TRUE if RSS vs Period has no local minimum
-            # only applicable for variable period fits
-            if(length(period_vec) > 1){
-              rss_flag = sapply(1:nrow(rss_per_period), function(x) !any(diff(diff(rss_per_period[x, ]) > 0) == 1))
-            }
-
             # Get TSS for all genes
             lm_mean_devs = sweep(in_data[, -1], MARGIN = 2, STATS = colMeans(in_data[, -1]), FUN = "-")
             lm_tss = colSums(lm_mean_devs^2)
@@ -148,9 +142,12 @@ setMethod("sineFit", signature(in_data = "data.frame", rowData = "data.frame"),
                                lm_RSS = as.vector(lm_rss),
                                Base = lm_vert, Amp = lm_amp, Period = period_vec[min_rss_period],
                                Phase_Shift = lm_horiz, Peak_Phase = lm_phase)
-            # Add RSS flag if variable period fit
+            # Determine RSS flags: TRUE if RSS vs Period plot has no local minimum
+            # Only applicable for variable period fits
             if(length(period_vec) > 1){
-              result_tb = mutate(result_tb, RSS_flag = rss_flag, .after = lm_RSS)
+              rss_flag = sapply(1:nrow(rss_per_period), function(x) !any(diff(diff(rss_per_period[x, ]) > 0) == 1))
+              # Add flag column to result_tb
+              result_tb = mutate(result_tb, RSS_Flag = rss_flag, .after = lm_RSS)
             }
 
             # Rearrange RSS per period
@@ -239,14 +236,14 @@ setMethod("show", "sineFitData",
 #' \item \code{lm_Ftest_Adj_Pval:}    the p-value for the linear F-statistic adjusted for multiple test correction
 #' \item \code{lm_RSquared:}    the linear R-squared value
 #' \item \code{lm_Adj_RSquared:}    the adjusted linear R-squared value
-#' \item \code{lm_RSS:}    the residual sum of squares for the linear model
-#' \item \code{RSS_flag:}    TRUE if the RSS vs Period plot has no local minimum within the time interval \code{[min_per, max_per]} used
+#' \item \code{lm_RSS:}    the residual sum of squares (RSS) for the linear model
+#' \item \code{RSS_Flag:}    TRUE if the RSS vs Period plot has no local minimum within the time interval \code{[min_per, max_per]} used
 #' when generating the \code{sineFitData} object. Not present if \code{sineFit} was run with a fixed period.
 #' \item \code{Base:}    the base (mean) level for the sine
 #' \item \code{Amp:}    the amplitude for the sine
 #' \item \code{Period:}    the period (angular frequency) for the sine
 #' \item \code{Phase_Shift:}    the phase-shift for the sine
-#' \item \code{Peak_Phase:}    the time at which the sine is at it's maximum
+#' \item \code{Peak_Phase:}    the time at which the sine is at its maximum
 #' }
 #' @export
 #' @rdname results-methods
