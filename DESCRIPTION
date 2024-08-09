@@ -2,7 +2,7 @@ Package: sineFit
 Type: Package
 Title: Useful Functions for Sinusoidal Regression
 Version: 0.1.0
-Author: Who wrote it
+Author: John Casement
 Maintainer: The package maintainer <john.casement@newcastle.ac.uk>
 Description: Performs a sinusoidal regression based on a linear transformation.
 Encoding: UTF-8
